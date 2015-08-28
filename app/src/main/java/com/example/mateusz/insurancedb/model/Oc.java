@@ -20,6 +20,33 @@ public class Oc {
 	private final Insurer insurer;
 	private final float premium;
 	private final String ocId;
+	private final float premiumBase;
+
+	public Oc(OcBuilder builder) {
+		if (builder.customer == null) throw new NullPointerException("customer not found");
+		if (builder.vehicle == null) throw new NullPointerException("vehicle not found");
+		if (builder.discounts == null) throw new NullPointerException("discounts not found");
+		if (builder.zone == null) throw new NullPointerException("zone not found");
+		if (builder.placeOfIssue == null) throw new NullPointerException("placeOfIssue not found");
+		if (builder.dateOfIssue == null) throw new NullPointerException("dateOfIssue not found");
+		if (builder.dateBegin == null) throw new NullPointerException("dateBegin not found");
+		if (builder.dateFinish == null) throw new NullPointerException("dateFinish not found");
+		if (builder.insurer == null) throw new NullPointerException("insurer not found");
+		if (builder.premiumBase == null) throw new NullPointerException("premiumBase not found");
+
+		customer = builder.customer;
+		vehicle = builder.vehicle;
+		discounts = builder.discounts;
+		zone = builder.zone;
+		placeOfIssue = builder.placeOfIssue;
+		dateOfIssue = builder.dateOfIssue;
+		dateBegin = builder.dateBegin;
+		dateFinish = builder.dateFinish;
+		insurer = builder.insurer;
+		premiumBase = builder.premiumBase;
+		ocId = builder.ocId != null ? builder.ocId : NEW_OC_ID;
+		premium = calculatePremium();
+	}
 
 	public Customer getCustomer() {
 		return customer;
@@ -65,32 +92,21 @@ public class Oc {
 		return ocId;
 	}
 
-	public Oc(OcBuilder builder) {
-		if (builder.customer == null) throw new NullPointerException("customer not found");
-		if (builder.vehicle == null) throw new NullPointerException("vehicle not found");
-		if (builder.discounts == null) throw new NullPointerException("discounts not found");
-		if (builder.zone == null) throw new NullPointerException("zone not found");
-		if (builder.placeOfIssue == null) throw new NullPointerException("placeOfIssue not found");
-		if (builder.dateOfIssue == null) throw new NullPointerException("dateOfIssue not found");
-		if (builder.dateBegin == null) throw new NullPointerException("dateBegin not found");
-		if (builder.dateFinish == null) throw new NullPointerException("dateFinish not found");
-		if (builder.insurer == null) throw new NullPointerException("insurer not found");
-
-		customer = builder.customer;
-		vehicle = builder.vehicle;
-		discounts = builder.discounts;
-		zone = builder.zone;
-		placeOfIssue = builder.placeOfIssue;
-		dateOfIssue = builder.dateOfIssue;
-		dateBegin = builder.dateBegin;
-		dateFinish = builder.dateFinish;
-		insurer = builder.insurer;
-		ocId = builder.ocId != null ? builder.ocId : NEW_OC_ID;
-		premium = calculatePremium(vehicle.getCapacity(),zone.getZoneValue(),discounts);
-	}
-
-	private float calculatePremium(float carCapacity, float zoneValue, Collection<Discount> discounts) {
-		//TODO: Premium rules
-		return 0;
+	/*Should private method have parameters or access members directly?*/
+	private float calculatePremium() {
+		float premium = premiumBase;
+		for (Discount discount : discounts) {
+			if (discount.getType() == UsageType.MULTIPLY) {
+				premium = premium * discount.getValue();
+			} else if (discount.getType() == UsageType.ADD) {
+				premium = premium + discount.getValue();
+			}
+		}
+		if (zone.getZoneType() == UsageType.MULTIPLY) {
+			premium = premium * zone.getZoneValue();
+		} else if (zone.getZoneType() == UsageType.ADD) {
+			premium = premium + zone.getZoneValue();
+		}
+		return premium;
 	}
 }

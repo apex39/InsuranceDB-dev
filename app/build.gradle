@@ -5,7 +5,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 23
     buildToolsVersion '21.1.2'
 
     defaultConfig {
@@ -25,9 +25,11 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.mcxiaoke.volley:library:1.0.10'
+    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.google.code.gson:gson:2.3.1'
 
     testCompile 'junit:junit:4.12'
+    testCompile 'org.easymock:easymock:3.1'
+
 }

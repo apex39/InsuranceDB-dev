@@ -20,6 +20,7 @@ public class OcBuilder {
 	 Date dateFinish;
 	 Insurer insurer;
 	 String ocId;
+	 Float premiumBase;
 
 	public static OcBuilder oc(){
 		return new OcBuilder();
@@ -72,6 +73,11 @@ public class OcBuilder {
 
 	public OcBuilder withOcId(String ocId) {
 		this.ocId = ocId;
+		return this;
+	}
+
+	public OcBuilder withPremiumBase(Float premiumBase) {
+		this.premiumBase = premiumBase;
 		return this;
 	}
 

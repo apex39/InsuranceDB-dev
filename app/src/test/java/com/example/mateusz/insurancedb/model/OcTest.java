@@ -21,6 +21,8 @@ import static junit.framework.Assert.assertNotNull;
 public class OcTest {
 
 	private static final float CAPACITY = 1.3f;
+	private static final float PREMIUM_BASE = 100;
+	private static final String PLACE_OF_ISSUE = "London";
 	private static final String PESEL = "36521452369";
 	Address customerAddress;
 	Customer customer;
@@ -43,7 +45,6 @@ public class OcTest {
 
 		zone = new Zone(1, UsageType.ADD, 1.3f, "Sample Label");
 		ocBuilder = new OcBuilder();
-
 	}
 
 	@Test
@@ -56,7 +57,8 @@ public class OcTest {
 				.withVehicle(car)
 				.withDiscounts(discounts)
 				.withZone(zone)
-				.withPlaceOfIssue("Place");
+				.withPlaceOfIssue(PLACE_OF_ISSUE)
+				.withPremiumBase(PREMIUM_BASE);
 
 		Oc oc = ocBuilder.build();
 		assertEquals(customer, oc.getCustomer());
@@ -69,6 +71,7 @@ public class OcTest {
 		assertEquals(zone, oc.getZone());
 		assertEquals(insurer, oc.getInsurer());
 		assertEquals(discounts, oc.getDiscounts());
+		assertEquals(PLACE_OF_ISSUE, oc.getPlaceOfIssue());
 		assertNotNull(oc.getPremium());
 		assertEquals(Oc.NEW_OC_ID, oc.getOcId());
 	}
@@ -76,6 +79,7 @@ public class OcTest {
 	@Test
 	public void testOcOcId() {
 		String sampleId = "Sample Id";
+
 		ocBuilder.withCustomer(customer)
 				.withDateBegin(new Date(2013, 12, 13))
 				.withDateFinish(new Date(2015, 13, 13))
@@ -85,9 +89,15 @@ public class OcTest {
 				.withDiscounts(discounts)
 				.withZone(zone)
 				.withPlaceOfIssue("Place")
-				.withOcId(sampleId);
+				.withOcId(sampleId)
+				.withPremiumBase(PREMIUM_BASE);
 
 		Oc oc = ocBuilder.build();
 		assertEquals(sampleId, oc.getOcId());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testCreatingEmptyOcThrowsNullPointerException(){
+		Oc oc = ocBuilder.build();
 	}
 }
